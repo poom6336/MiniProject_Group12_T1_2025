@@ -34,7 +34,8 @@ def write_csv(fName, data):
         writer.writeheader()
         writer.writerows(data)
 
-def find_csv(fName,find):
+
+def find_csv(fName, find):
     with open(fName, "r") as f:
         reader = csv.DictReader(f)
 
@@ -44,6 +45,25 @@ def find_csv(fName,find):
             
     return None
 
+def name_csv(fName, find):
+    with open(fName, "r") as f:
+        reader = csv.DictReader(f)
+
+        for row in reader:
+            if row["CourseCode"] == find:
+                return row["Name"]
+            
+    return None
+
+def cred_csv(fName, find):
+    with open(fName, "r") as f:
+        reader = csv.DictReader(f)
+
+        for row in reader:
+            if row["CourseCode"] == find:
+                return row["Credit"]
+            
+    return None
 
 with open(newCSV, 'w', newline='') as coursef:
     writer = csv.DictWriter(coursef, dataName)
@@ -57,12 +77,13 @@ while True:
         tempSplit = usInput.split()
         usCourse = tempSplit[1]
         fillData = find_csv(mainCSV, usCourse)
-        
+
         if fillData:
             current = read_csv(newCSV)
             current.append(fillData)
             write_csv(newCSV, current)
-            print("Added", usCourse)
+            tempCred = list(cred_csv(mainCSV,usCourse))
+            print("Added: ",name_csv(mainCSV,usCourse)," ( ", tempCred[0], "credits ) ")
         else:
             print("Course not found")
 
