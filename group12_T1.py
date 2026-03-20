@@ -32,7 +32,7 @@ def write_csv(fName, data):
     with open(fName, 'w', newline='') as dataf:
         writer = csv.DictWriter(dataf, dataName)
         writer.writeheader()
-        writer.writerows(data)
+        writer.writerows(priority_sort(data))
 
 
 def find_csv(fName, find):
@@ -54,6 +54,18 @@ def name_csv(fName, find):
                 return row["Name"]
             
     return None
+
+def priority_sort(data):
+    sec_list = []
+    lab_list = []
+
+    for row in data:
+        if row["Type"] == "Sec":
+            sec_list.append(row)
+        else:
+            lab_list.append(row)
+
+    return sec_list + lab_list
 
 def cred_csv(fName, find):
     with open(fName, "r") as f:
@@ -89,3 +101,10 @@ while True:
 
     elif "undo" in usInput:
         undo(newCSV)
+
+    elif "ok" in usInput:
+        data = read_csv(newCSV)
+        sorted_data = priority_sort(data)
+        
+        for row in sorted_data:
+            print(row["CourseCode"], "-", row["Name"], "-", row["Type"])
