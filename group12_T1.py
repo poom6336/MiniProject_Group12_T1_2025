@@ -35,24 +35,70 @@ def write_csv(fName, data):
         writer.writerows(priority_sort(data))
 
 
-def find_csv(fName, find):
+def find_csv(fName, find, count):
     with open(fName, "r") as f:
         reader = csv.DictReader(f)
 
         for row in reader:
             if row["CourseCode"] == find:
+                if count > 1:
+                    count-=1
+                    continue
                 return row
             
     return None
 
-def name_csv(fName, find):
+def name_csv(fName, find, count):
     with open(fName, "r") as f:
         reader = csv.DictReader(f)
 
         for row in reader:
             if row["CourseCode"] == find:
+                if count > 1:
+                    count-=1
+                    continue
                 return row["Name"]
             
+    return None
+
+def cred_csv(fName, find, count):
+    with open(fName, "r") as f:
+        reader = csv.DictReader(f)
+
+        for row in reader:
+            if row["CourseCode"] == find:
+                if count > 1:
+                    count-=1
+                    continue
+                return row["Credit"]
+            
+    return None
+
+def lect_csv(fName, find, count):
+    with open(fName, "r") as f:
+        reader = csv.DictReader(f)
+
+        for row in reader:
+            if row["CourseCode"] == find:
+                if count > 1:
+                    count-=1
+                    continue
+                return row["Lecturer"]
+            
+    return None
+
+def fCount_csv(fName, find):
+    with open(fName, "r") as f:
+        reader = csv.DictReader(f)
+        count = 0
+
+        for row in reader:
+            if row["CourseCode"] == find:
+                count+=1
+
+        if count>=1:
+            return count 
+        
     return None
 
 def priority_sort(data):
@@ -67,12 +113,15 @@ def priority_sort(data):
 
     return sec_list + lab_list
 
-def cred_csv(fName, find):
+def cred_csv(fName, find, count):
     with open(fName, "r") as f:
         reader = csv.DictReader(f)
 
         for row in reader:
             if row["CourseCode"] == find:
+                if count > 1:
+                    count-=1
+                    continue
                 return row["Credit"]
             
     return None
@@ -88,23 +137,29 @@ while True:
     if "add" in usInput:
         tempSplit = usInput.split()
         usCourse = tempSplit[1]
-        fillData = find_csv(mainCSV, usCourse)
+        dataCount = fCount_csv(mainCSV, usCourse)
 
-        if fillData:
-            current = read_csv(newCSV)
-            current.append(fillData)
-            write_csv(newCSV, current)
-            tempCred = list(cred_csv(mainCSV,usCourse))
-            print("Added: ",name_csv(mainCSV,usCourse)," ( ", tempCred[0], "credits ) ")
+        if dataCount:
+            while dataCount != 0:
+                fillData = find_csv(mainCSV, usCourse, dataCount)
+                current = read_csv(newCSV)
+                current.append(fillData)
+                write_csv(newCSV, current)
+                tempCred = list(cred_csv(mainCSV, usCourse, dataCount))
+                print("Added: ",name_csv(mainCSV, usCourse, dataCount)," (", tempCred[0], "credits) to ",lect_csv(mainCSV,usCourse,dataCount))
+                dataCount-=1
         else:
             print("Course not found")
 
     elif "undo" in usInput:
         undo(newCSV)
 
-    elif "ok" in usInput:
+    elif "process_all" in usInput:
         data = read_csv(newCSV)
         sorted_data = priority_sort(data)
         
         for row in sorted_data:
-            print(row["CourseCode"], "-", row["Name"], "-", row["Type"])
+            if row["Type"] == "Sec":
+                typeData = "[PRIORITY]"
+            else: typeData = "[NORMAL]"
+            print(typeData,row["CourseCode"], "-", row["Name"], "-", row["Type"])
