@@ -13,7 +13,7 @@ Supports adding courses, undoing changes, and processing all records with priori
 - Process and display all courses
 - Priority sorting (`Sec` before others)
 
-## 📊 Big-O Analysis
+## Big-O Analysis
 # Most operations:
 Time Complexity = O(n)
 Reason: Full file read/write + linear search
