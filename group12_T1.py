@@ -11,7 +11,7 @@ def undo(fName):
         stored_data = storage.pop()
 
         with open(fName, 'w', newline='') as dataf:
-            print("REVERTED: ",)
+            print("REVERTED: ")
             writer = csv.DictWriter(dataf, dataName)
             writer.writeheader()
             writer.writerows(stored_data)
@@ -112,19 +112,6 @@ def priority_sort(data):
             lab_list.append(row)
 
     return sec_list + lab_list
-
-def cred_csv(fName, find, count):
-    with open(fName, "r") as f:
-        reader = csv.DictReader(f)
-
-        for row in reader:
-            if row["CourseCode"] == find:
-                if count > 1:
-                    count-=1
-                    continue
-                return row["Credit"]
-            
-    return None
 
 with open(newCSV, 'w', newline='') as coursef:
     writer = csv.DictWriter(coursef, dataName)
